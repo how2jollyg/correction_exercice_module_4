@@ -1,0 +1,12 @@
+# Note that only one of these targets is required
+
+my-bigquery-db:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      project: secondhand-luxury
+      dataset: dbt_gjolly # You can also use "schema" here
+      threads: 4 # Must be a value of 1 or greater 
+      keyfile: /Users/gjolly/Downloads/secondhand-luxury-019111111111-019111111111.json
