@@ -1,5 +1,6 @@
 WITH session_data AS (
   SELECT
+  2 as column_2,
     user_pseudo_id,
     ga_session_id,
     MIN(event_timestamp) AS session_start_time,
