@@ -1,13 +1,20 @@
-SELECT DATE_TRUNC(order_created_at, DAY) AS report_date,
-2 as column_1,
-    mapping.account_manager,
-    mapping.state,
-    COUNT(DISTINCT order_id) AS total_orders,
-    AVG(total_distinct_items) AS average_total_distinct_items,
-    SUM(sum_feedback_score) / SUM(total_feedbacks) AS average_feedback_score,
-    AVG(total_order_amount) AS average_total_order_amount
-FROM {{ ref('int_sales_database__order') }} AS orders
-LEFT JOIN {{ ref('stg_google_sheets__account_manager_region_mapping') }} as mapping ON orders.user_state = mapping.state
-GROUP BY report_date,
-    account_manager,
-    state
+{{
+  config(
+    alias = "order_daily_report"
+  )
+}}
+
+
+select
+    oi.order_date,
+    ac.account_manager,
+    oi.customer_state as state,
+    oi.average_feedback_score,
+    coalesce(round(avg(total_items),2),0) as average_items_per_order,
+    coalesce(round(avg(total_order_amount),2),0) as average_amount_per_order,
+    coalesce(count(distinct order_id),0) as total_orders
+from {{ref('int_sales_database__order')}} oi
+left join {{ref("stg_account_manager_region_mapping")}} ac
+on oi.customer_state = ac.state
+group by oi.order_date, ac.account_manager, oi.customer_state, oi.average_feedback_score
+order by ac.account_manager, oi.order_date
