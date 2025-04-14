@@ -1,5 +1,4 @@
 select CONCAT(order_id, '_', product_id) AS order_item_id,
-1 as column_1,
  order_id,
  product_id,
  seller_id,
